@@ -1,70 +1,334 @@
-# Getting Started with Create React App
+# 🚦 CityPulse 🌆
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Smart City Monitoring and Incident Reporting System
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+# 📌 Overview
 
-### `npm start`
+CityPulse is a real-time smart city monitoring web application that allows users to report urban issues directly on a live map. The system helps visualize incidents, monitor city problems, and analyze urban activity through an interactive dashboard.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The platform supports:
+- live incident reporting
+- realtime analytics
+- dynamic map markers
+- voting system
+- incident tracking
+- realtime Firebase syncing
+- weather monitoring
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+using Firebase and Leaflet maps.
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# 🌍 Problem Statement
 
-### `npm run build`
+City infrastructure information is often outdated and slow to update.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+CityPulse solves this problem by enabling citizens to crowdsource and visualize:
+- safety hazards
+- accessibility problems
+- traffic issues
+- lighting failures
+- road damage
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+in real time using an interactive map platform.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+# 🚀 Features
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🗺️ Live Interactive Map
+- Users can report issues directly on the map
+- Dynamic map markers for every report
+- Realtime updates without refreshing
+- OpenStreetMap integration
+- Kalyani / Haringhata focused deployment
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 📊 Realtime Dashboard
+- Live analytics cards
+- Weekly report activity graph
+- Incident distribution pie chart
+- Recent activity section
+- Dynamic statistics
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## 🚨 Incident Reporting
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Users can report:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Safety issues
+- Traffic problems
+- Road damage
+- Lighting issues
+- Accessibility concerns
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 👍 Voting System
+- Users can upvote incidents
+- Priority level updates dynamically
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📈 Priority Detection
 
-### Making a Progressive Web App
+Priority is automatically generated:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- High → Votes > 8
+- Medium → Votes > 5
+- Low → Votes ≤ 5
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 📂 Reports Management
+- Search reports
+- Realtime incident cards
+- Dynamic status display
+- Actual location coordinates shown
+- Timestamp tracking
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# 🌦️ Weather Monitoring
 
-### `npm run build` fails to minify
+CityPulse also includes a dedicated weather monitoring section to help users stay updated with environmental conditions that may affect city infrastructure and public safety.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Features
+- Live weather updates
+- Temperature monitoring
+- Weather condition display
+- Smart city environment integration
+- Responsive weather dashboard UI
+
+### Purpose
+The weather section helps correlate:
+- rainfall with flood reports
+- visibility with traffic conditions
+- weather conditions with road safety
+
+This makes CityPulse a more complete smart-city monitoring platform.
+
+---
+
+## ☁️ Firebase Integration
+- Firestore realtime database
+- Firebase Hosting
+- Live syncing of reports
+- Realtime listeners using `onSnapshot()`
+
+---
+
+# 🧠 System Workflow
+
+1. User clicks on the map
+2. Location coordinates are captured
+3. User submits incident details
+4. Data is stored in Firebase Firestore
+5. Realtime listeners update:
+   - map markers
+   - dashboard analytics
+   - reports page
+6. Users can upvote incidents
+7. Priority updates dynamically
+
+---
+
+# 📡 Realtime Functionality
+
+CityPulse uses Firebase Firestore realtime listeners (`onSnapshot`) to instantly synchronize:
+- incident reports
+- dashboard statistics
+- map markers
+- vote updates
+
+across all users without page refresh.
+
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
+- React.js
+- React Router
+- CSS3
+- React Icons
+
+## Backend / Database
+- Firebase Firestore
+- Firebase Hosting
+
+## Maps & Visualization
+- React Leaflet
+- OpenStreetMap
+- Recharts
+
+---
+
+# 📁 Project Structure
+
+```bash
+src/
+│
+├── components/
+│   └── Sidebar.js
+│
+├── pages/
+│   ├── Dashboard.js
+│   ├── MapPage.js
+│   ├── Reports.js
+│   └── Weather.js
+│
+├── styles/
+│   ├── Dashboard.css
+│   ├── MapPage.css
+│   ├── Reports.css
+│   ├── Sidebar.css
+│   └── Weather.css
+│
+├── firebase.js
+├── App.js
+└── index.js
+```
+
+---
+
+# ⚙️ Installation
+
+## 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/Saswatiiiii/citypulse.git
+```
+
+---
+
+## 2️⃣ Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+## 3️⃣ Start Development Server
+
+```bash
+npm start
+```
+
+---
+
+# 🔥 Firebase Setup
+
+1. Create Firebase Project  
+2. Enable Firestore Database  
+3. Enable Firebase Hosting  
+4. Copy Firebase Config  
+5. Create `firebase.js`
+
+### Example
+
+```javascript
+import { initializeApp } from "firebase/app";
+
+import { getFirestore } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID",
+};
+
+const app = initializeApp(firebaseConfig);
+
+export const db = getFirestore(app);
+```
+
+---
+
+# 📌 Firestore Collection Structure
+
+## Collection Name
+
+```bash
+reports
+```
+
+---
+
+## Document Example
+
+```json
+{
+  "type": "road",
+  "desc": "Large pothole causing accidents",
+  "lat": 22.5726,
+  "lng": 88.3639,
+  "votes": 7,
+  "createdAt": "timestamp"
+}
+```
+
+---
+
+# 🌐 Live Demo
+
+https://citypulse-2ef8d.web.app
+
+---
+
+# 📷 Screenshots
+
+## 📊 Dashboard
+
+![Dashboard](assets/screenshots/dashboard.png)
+
+---
+
+## 🗺️ Map Page
+
+![Map](assets/screenshots/map.png)
+
+---
+
+## 📂 Reports Page
+
+![Reports](assets/screenshots/reports.png)
+
+---
+
+## 🌦️ Weather Page
+
+![Weather](assets/screenshots/weather.png)
+
+---
+
+# 🌟 Future Improvements
+
+- Reverse geocoding for location names
+- Admin dashboard
+- Image upload support
+- Notification system
+- AI-based incident prediction
+- Route optimization
+- Emergency alert system
+
+---
+
+# 👨‍💻 Developed By
+
+- Saswati Chatterjee
+- Debolina Mitra
+
+---
+
+# 📄 License
+
+This project was built for educational, portfolio, and hackathon purposes.

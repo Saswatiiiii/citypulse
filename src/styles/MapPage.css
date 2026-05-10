@@ -1,0 +1,306 @@
+.map-layout {
+  display: flex;
+
+  height: 100vh;
+
+  background: var(--bg-main);
+
+  margin-left: 260px;
+
+  transition: 0.3s;
+}
+
+.map-section {
+  flex: 1;
+
+  position: relative;
+}
+
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+
+.feed-sidebar {
+  width: 340px;
+
+  background: var(--bg-card);
+
+  backdrop-filter: blur(12px);
+
+  padding: 20px;
+
+  overflow-y: auto;
+
+  color: var(--text-main);
+
+  border-left: 1px solid var(--border-color);
+
+  transition: 0.3s;
+}
+
+.feed-sidebar h2 {
+  margin-bottom: 20px;
+
+  font-size: 24px;
+
+  color: var(--text-main);
+}
+
+.feed-card {
+  background: var(--bg-card);
+
+  padding: 16px;
+
+  border-radius: 18px;
+
+  margin-bottom: 16px;
+
+  transition: 0.3s;
+
+  border: 1px solid var(--border-color);
+
+  color: var(--text-main);
+}
+
+.feed-card:hover {
+  transform: translateY(-3px);
+
+  background: rgba(59,130,246,0.08);
+}
+
+.feed-card h3 {
+  margin-bottom: 10px;
+
+  color: var(--text-main);
+}
+
+.feed-card p {
+  margin-bottom: 10px;
+
+  line-height: 1.5;
+
+  color: var(--text-secondary);
+}
+
+.feed-card span {
+  font-size: 13px;
+
+  color: var(--text-secondary);
+}
+
+.empty-feed {
+  color: var(--text-secondary);
+}
+
+.report-modal {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.report-form {
+  width: 400px;
+
+  background: var(--bg-card);
+
+  backdrop-filter: blur(10px);
+
+  padding: 25px;
+
+  border-radius: 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+
+  color: var(--text-main);
+
+  border: 1px solid var(--border-color);
+
+  box-shadow: 0 0 25px rgba(0,0,0,0.4);
+
+  transition: 0.3s;
+}
+
+.report-form h2 {
+  text-align: center;
+
+  color: var(--text-main);
+}
+
+.report-form select,
+.report-form textarea {
+  padding: 12px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: var(--bg-card);
+
+  color: var(--text-main);
+
+  font-size: 15px;
+
+  outline: none;
+}
+
+.report-form select option {
+  background: #0f172a;
+
+  color: white;
+}
+
+.report-form textarea {
+  min-height: 120px;
+
+  resize: none;
+}
+
+.form-buttons {
+  display: flex;
+
+  gap: 10px;
+}
+
+.submit-btn,
+.cancel-btn,
+.upvote-btn {
+  padding: 10px 15px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  transition: 0.3s;
+}
+
+.submit-btn {
+  background: #3b82f6;
+
+  color: white;
+
+  flex: 1;
+}
+
+.submit-btn:hover {
+  transform: scale(1.03);
+}
+
+.cancel-btn {
+  background: #ef4444;
+
+  color: white;
+}
+
+.popup-card {
+  min-width: 200px;
+}
+
+.popup-card h3 {
+  margin-bottom: 10px;
+
+  color: #111827;
+}
+
+.upvote-btn {
+  margin-top: 10px;
+
+  background: #22c55e;
+
+  color: white;
+}
+
+.floating-btn {
+  position: fixed;
+
+  bottom: 30px;
+  right: 380px;
+
+  width: 65px;
+  height: 65px;
+
+  border-radius: 50%;
+
+  border: none;
+
+  background: #3b82f6;
+
+  color: white;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  z-index: 1000;
+
+  box-shadow: 0 0 20px rgba(59,130,246,0.5);
+
+  transition: 0.3s;
+}
+
+.floating-btn:hover {
+  transform: scale(1.1);
+
+  background: #2563eb;
+}
+
+.locate-btn {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  z-index: 1000;
+
+  width: 55px;
+  height: 55px;
+
+  border-radius: 50%;
+
+  border: none;
+
+  background: var(--bg-card);
+
+  color: var(--text-main);
+
+  font-size: 20px;
+
+  cursor: pointer;
+
+  border: 1px solid var(--border-color);
+
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+
+  backdrop-filter: blur(10px);
+
+  transition: 0.3s;
+}
+
+.locate-btn:hover {
+  transform: scale(1.08);
+
+  background: #3b82f6;
+
+  color: white;
+}

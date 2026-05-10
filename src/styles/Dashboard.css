@@ -1,0 +1,183 @@
+.dashboard-page {
+  margin-left: 280px;
+
+  padding: 40px;
+
+  min-height: 100vh;
+
+  background: var(--bg-main);
+
+  color: var(--text-main);
+
+  transition: 0.3s;
+}
+
+.dashboard-header {
+  margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+  font-size: 42px;
+
+  margin-bottom: 10px;
+
+  color: var(--text-main);
+}
+
+.dashboard-header p {
+  color: var(--text-secondary);
+}
+
+.dashboard-stats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(240px, 1fr));
+
+  gap: 24px;
+
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+
+  border: 1px solid var(--border-color);
+
+  backdrop-filter: blur(12px);
+
+  border-radius: 24px;
+
+  padding: 24px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 20px;
+
+  transition: 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+
+  background: rgba(59,130,246,0.08);
+
+  box-shadow:
+    0 0 25px rgba(59,130,246,0.18);
+}
+
+.stat-icon {
+  width: 70px;
+
+  height: 70px;
+
+  border-radius: 18px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 28px;
+}
+
+.blue {
+  background: rgba(59,130,246,0.2);
+
+  color: #3b82f6;
+}
+
+.green {
+  background: rgba(34,197,94,0.2);
+
+  color: #22c55e;
+}
+
+.red {
+  background: rgba(239,68,68,0.2);
+
+  color: #ef4444;
+}
+
+.orange {
+  background: rgba(249,115,22,0.2);
+
+  color: #f97316;
+}
+
+.stat-card h2 {
+  font-size: 32px;
+
+  margin-bottom: 6px;
+
+  color: var(--text-main);
+}
+
+.stat-card p {
+  color: var(--text-secondary);
+}
+
+.dashboard-grid {
+  display: grid;
+
+  grid-template-columns: 2fr 1fr;
+
+  gap: 24px;
+
+  margin-bottom: 40px;
+}
+
+.chart-card {
+  background: var(--bg-card);
+
+  border: 1px solid var(--border-color);
+
+  backdrop-filter: blur(12px);
+
+  border-radius: 24px;
+
+  padding: 24px;
+}
+
+.chart-card h2 {
+  margin-bottom: 20px;
+
+  color: var(--text-main);
+}
+
+.activity-section h2 {
+  margin-bottom: 20px;
+
+  color: var(--text-main);
+}
+
+.activity-list {
+  display: grid;
+
+  gap: 16px;
+}
+
+.activity-card {
+  background: var(--bg-card);
+
+  border: 1px solid var(--border-color);
+
+  backdrop-filter: blur(12px);
+
+  padding: 20px;
+
+  border-radius: 18px;
+
+  transition: 0.3s;
+
+  color: var(--text-main);
+}
+
+.activity-card:hover {
+  background: rgba(59,130,246,0.08);
+
+  transform: translateY(-3px);
+}
