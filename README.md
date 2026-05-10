@@ -288,25 +288,25 @@ https://citypulse-2ef8d.web.app
 
 ## 📊 Dashboard
 
-![Dashboard](assets/screenshots/dashboard.png)
+![Dashboard](src/assets/dashboard.png)
 
 ---
 
 ## 🗺️ Map Page
 
-![Map](assets/screenshots/map.png)
+![Map](src/assets/map.png)
 
 ---
 
 ## 📂 Reports Page
 
-![Reports](assets/screenshots/reports.png)
+![Reports](src/assets/reports.png)
 
 ---
 
 ## 🌦️ Weather Page
 
-![Weather](assets/screenshots/weather.png)
+![Weather](src/assets/weather.png)
 
 ---
 
