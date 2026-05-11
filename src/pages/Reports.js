@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
 import {
   FaMapMarkerAlt,
-  FaClock,
   FaSearch,
+  FaThumbsUp,
 } from "react-icons/fa";
 
 import {
   collection,
   onSnapshot,
-  query,
-  orderBy,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -19,120 +20,98 @@ import "../styles/Reports.css";
 
 function Reports() {
 
-  const [search, setSearch] = useState("");
+  const [reports, setReports] =
+    useState([]);
 
-  const [reports, setReports] = useState([]);
+  const [search, setSearch] =
+    useState("");
+
+  // ---------------- REALTIME REPORTS ----------------
 
   useEffect(() => {
 
-    const q = query(
+    const unsubscribe = onSnapshot(
       collection(db, "reports"),
-      orderBy("createdAt", "desc")
+
+      (snapshot) => {
+
+        const data = snapshot.docs.map(
+          (doc) => {
+
+            const report =
+              doc.data();
+
+            let priority =
+              "Low";
+
+            if (
+              report.votes > 8
+            ) {
+              priority =
+                "High";
+            }
+
+            else if (
+              report.votes > 5
+            ) {
+              priority =
+                "Medium";
+            }
+
+            return {
+
+              id: doc.id,
+
+              ...report,
+
+              priority,
+            };
+          }
+        );
+
+        setReports(data);
+      }
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-
-      const reportsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setReports(reportsData);
-
-    });
-
-    return () => unsubscribe();
+    return () =>
+      unsubscribe();
 
   }, []);
 
-  const getPriority = (votes) => {
+  // ---------------- SEARCH ----------------
 
-    if (votes > 8) {
-      return "High";
-    }
-
-    else if (votes > 5) {
-      return "Medium";
-    }
-
-    else {
-      return "Low";
-    }
-  };
-
-  const getStatus = (votes) => {
-
-    if (votes > 8) {
-      return "Active";
-    }
-
-    else if (votes > 5) {
-      return "Pending";
-    }
-
-    else {
-      return "Resolved";
-    }
-  };
-
-  const getTimeAgo = (timestamp) => {
-
-    if (!timestamp) return "Just now";
-
-    const date =
-      timestamp.seconds
-        ? new Date(timestamp.seconds * 1000)
-        : new Date(timestamp);
-
-    const seconds =
-      Math.floor((new Date() - date) / 1000);
-
-    const minutes =
-      Math.floor(seconds / 60);
-
-    const hours =
-      Math.floor(minutes / 60);
-
-    const days =
-      Math.floor(hours / 24);
-
-    if (minutes < 1) {
-      return "Just now";
-    }
-
-    if (minutes < 60) {
-      return `${minutes} mins ago`;
-    }
-
-    if (hours < 24) {
-      return `${hours} hours ago`;
-    }
-
-    return `${days} days ago`;
-  };
-
-  const filteredReports = reports.filter((report) =>
-
-    report.type
-      ?.toLowerCase()
-      .includes(search.toLowerCase())
-
-  );
+  const filteredReports =
+    reports.filter((report) =>
+      report.type
+        ?.toLowerCase()
+        .includes(
+          search.toLowerCase()
+        )
+    );
 
   return (
+
     <div className="reports-page">
+
+      {/* HEADER */}
 
       <div className="reports-header">
 
         <div>
 
-          <h1>🚨 City Reports</h1>
+          <h1>
+            🚨 City Reports
+          </h1>
 
           <p>
-            Monitor and manage real-time urban incidents
+            Monitor and manage
+            real-time urban
+            incidents
           </p>
 
         </div>
+
+        {/* SEARCH */}
 
         <div className="reports-search">
 
@@ -143,7 +122,9 @@ function Reports() {
             placeholder="Search reports..."
             value={search}
             onChange={(e) =>
-              setSearch(e.target.value)
+              setSearch(
+                e.target.value
+              )
             }
           />
 
@@ -151,75 +132,117 @@ function Reports() {
 
       </div>
 
+      {/* REPORTS */}
+
       <div className="reports-grid">
 
-        {filteredReports.map((report) => (
+        {filteredReports.map(
+          (report) => (
 
-          <div
-            className="report-card"
-            key={report.id}
-          >
+            <div
+              className="report-card"
+              key={report.id}
+            >
 
-            <div className="report-top">
+              {/* TOP */}
 
-              <h2>
-                {report.type?.charAt(0).toUpperCase() +
-                  report.type?.slice(1)}
-              </h2>
+              <div className="report-top">
 
-              <span
-                className={`priority ${getPriority(
-                  report.votes || 0
-                )}`}
-              >
-                {getPriority(report.votes || 0)}
-              </span>
+                <h2>
+
+                  {report.type
+                    ?.charAt(0)
+                    .toUpperCase() +
+
+                    report.type?.slice(
+                      1
+                    )}
+
+                </h2>
+
+                <span
+                  className={`priority ${report.priority}`}
+                >
+
+                  {report.priority}
+
+                </span>
+
+              </div>
+
+              {/* IMAGE */}
+
+              {report.image && (
+
+                <img
+                  src={report.image}
+                  alt="report"
+                  className="report-image"
+                />
+
+              )}
+
+              {/* DESCRIPTION */}
+
+              <p className="report-description">
+
+                {report.desc}
+
+              </p>
+
+              {/* INFO */}
+
+              <div className="report-info">
+
+                <span>
+
+                  <FaMapMarkerAlt />
+
+                  {report.lat?.toFixed(
+                    4
+                  )}
+
+                  ,
+
+                  {" "}
+
+                  {report.lng?.toFixed(
+                    4
+                  )}
+
+                </span>
+
+                <span>
+
+                  <FaThumbsUp />
+
+                  {" "}
+
+                  {report.votes || 0}
+
+                </span>
+
+              </div>
+
+              {/* BOTTOM */}
+
+              <div className="report-bottom">
+
+                <span className="status Active">
+
+                  Active
+
+                </span>
+
+                <button>
+                  View Details
+                </button>
+
+              </div>
 
             </div>
-
-            <p className="report-description">
-
-              {report.desc}
-
-            </p>
-
-            <div className="report-info">
-
-              <span>
-                <FaMapMarkerAlt />
-
-                {report.lat?.toFixed(4)},
-                {" "}
-                {report.lng?.toFixed(4)}
-              </span>
-
-              <span>
-                <FaClock />
-
-                {getTimeAgo(report.createdAt)}
-              </span>
-
-            </div>
-
-            <div className="report-bottom">
-
-              <span
-                className={`status ${getStatus(
-                  report.votes || 0
-                )}`}
-              >
-                {getStatus(report.votes || 0)}
-              </span>
-
-              <button>
-                👍 {report.votes || 0}
-              </button>
-
-            </div>
-
-          </div>
-
-        ))}
+          )
+        )}
 
       </div>
 

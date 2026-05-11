@@ -14,15 +14,21 @@
 
 .reports-header {
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+
   margin-bottom: 40px;
+
   gap: 20px;
+
   flex-wrap: wrap;
 }
 
 .reports-header h1 {
   font-size: 42px;
+
   margin-bottom: 10px;
 
   color: var(--text-main);
@@ -34,12 +40,15 @@
 
 .reports-search {
   display: flex;
+
   align-items: center;
+
   gap: 12px;
 
   background: var(--bg-card);
 
-  border: 1px solid var(--border-color);
+  border: 1px solid
+    var(--border-color);
 
   padding: 14px 18px;
 
@@ -64,15 +73,14 @@
   font-size: 15px;
 }
 
-.reports-search svg {
-  color: var(--text-secondary);
-}
-
 .reports-grid {
   display: grid;
 
   grid-template-columns:
-    repeat(auto-fit, minmax(320px, 1fr));
+    repeat(
+      auto-fit,
+      minmax(320px, 1fr)
+    );
 
   gap: 24px;
 }
@@ -80,7 +88,8 @@
 .report-card {
   background: var(--bg-card);
 
-  border: 1px solid var(--border-color);
+  border: 1px solid
+    var(--border-color);
 
   padding: 24px;
 
@@ -96,10 +105,12 @@
 .report-card:hover {
   transform: translateY(-6px);
 
-  background: rgba(59,130,246,0.08);
+  background:
+    rgba(59,130,246,0.08);
 
   box-shadow:
-    0 0 24px rgba(59,130,246,0.15);
+    0 0 24px
+    rgba(59,130,246,0.15);
 }
 
 .report-top {
@@ -129,21 +140,36 @@
 }
 
 .priority.High {
-  background: rgba(239,68,68,0.2);
+  background:
+    rgba(239,68,68,0.2);
 
   color: #ef4444;
 }
 
 .priority.Medium {
-  background: rgba(234,179,8,0.2);
+  background:
+    rgba(234,179,8,0.2);
 
   color: #facc15;
 }
 
 .priority.Low {
-  background: rgba(34,197,94,0.2);
+  background:
+    rgba(34,197,94,0.2);
 
   color: #22c55e;
+}
+
+.report-image {
+  width: 100%;
+
+  height: 220px;
+
+  object-fit: cover;
+
+  border-radius: 18px;
+
+  margin-bottom: 18px;
 }
 
 .report-description {
@@ -159,7 +185,7 @@
 
   justify-content: space-between;
 
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 
   font-size: 14px;
 
@@ -193,21 +219,10 @@
 }
 
 .status.Active {
-  background: rgba(59,130,246,0.2);
+  background:
+    rgba(59,130,246,0.2);
 
   color: #60a5fa;
-}
-
-.status.Pending {
-  background: rgba(234,179,8,0.2);
-
-  color: #facc15;
-}
-
-.status.Resolved {
-  background: rgba(34,197,94,0.2);
-
-  color: #22c55e;
 }
 
 .report-bottom button {
@@ -234,17 +249,19 @@
 
   .reports-page {
     margin-left: 0;
+
     padding: 20px;
   }
 
   .reports-header {
     flex-direction: column;
+
     align-items: flex-start;
   }
 
   .reports-search {
     width: 100%;
+
     min-width: unset;
   }
-
 }

@@ -15,6 +15,10 @@ import "leaflet/dist/leaflet.css";
 
 import "../styles/MapPage.css";
 
+import axios from "axios";
+
+import emailjs from "@emailjs/browser";
+
 import {
   collection,
   addDoc,
@@ -22,6 +26,7 @@ import {
   doc,
   updateDoc,
   increment,
+  serverTimestamp,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -78,6 +83,7 @@ const userIcon = new L.Icon({
 // ---------------- RECENTER ----------------
 
 function RecenterMap({ position }) {
+
   const map = useMap();
 
   useEffect(() => {
@@ -95,6 +101,7 @@ function AddMarker({
   setSelectedPosition,
   setAddingMode,
 }) {
+
   useMapEvents({
     click(e) {
 
@@ -133,6 +140,11 @@ function MapPage() {
   const [selectedPosition, setSelectedPosition] =
     useState(null);
 
+  const [image, setImage] = useState(null);
+
+  const [uploading, setUploading] =
+    useState(false);
+
   const [userPosition, setUserPosition] =
     useState([
       22.5726,
@@ -145,6 +157,7 @@ function MapPage() {
 
     const unsubscribe = onSnapshot(
       collection(db, "reports"),
+
       (snapshot) => {
 
         const data = snapshot.docs.map(
@@ -189,69 +202,143 @@ function MapPage() {
 
   const handleAddReport = async () => {
 
-  try {
+    try {
 
-    if (!type) {
-      alert("Select issue type");
-      return;
+      if (!type) {
+        alert("Select issue type");
+        return;
+      }
+
+      if (!desc.trim()) {
+        alert("Enter issue description");
+        return;
+      }
+
+      if (!selectedPosition) {
+        alert("Select map location");
+        return;
+      }
+
+      setUploading(true);
+
+      let imageUrl = "";
+
+      // IMAGE UPLOAD
+
+      if (image) {
+
+        const formData = new FormData();
+
+        formData.append(
+          "file",
+          image
+        );
+
+        formData.append(
+          "upload_preset",
+          "citypulse"
+        );
+
+        const response =
+          await axios.post(
+            "https://api.cloudinary.com/v1_1/dxmae1mqk/image/upload",
+            formData
+          );
+
+        imageUrl =
+          response.data.secure_url;
+      }
+
+      const lat = parseFloat(
+        selectedPosition[0]
+      );
+
+      const lng = parseFloat(
+        selectedPosition[1]
+      );
+
+      const reportData = {
+
+        type:
+          type.toLowerCase(),
+
+        desc:
+          desc.trim(),
+
+        lat,
+
+        lng,
+
+        votes: 0,
+
+        image: imageUrl,
+
+        createdAt:
+          serverTimestamp(),
+      };
+
+      await addDoc(
+        collection(db, "reports"),
+        reportData
+      );
+
+      // ---------------- EMAIL SEND ----------------
+
+      await emailjs.send(
+        "service_bv476x2",
+        "template_6s3t3ms",
+        {
+          name: type,
+
+          message: `
+Issue Type: ${type}
+
+Description:
+${desc}
+
+Location:
+${lat}, ${lng}
+
+Votes: 0
+
+Image:
+${imageUrl}
+          `,
+        },
+
+        "Ei_hNMbMvYIF3XPvA"
+      );
+
+      // RESET
+
+      setShowForm(false);
+
+      setType("");
+
+      setDesc("");
+
+      setImage(null);
+
+      setSelectedPosition(null);
+
+      setAddingMode(false);
+
+      alert(
+        "Report added successfully ✅"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(error.message);
+
+    } finally {
+
+      setUploading(false);
     }
+  };
 
-    if (!desc.trim()) {
-      alert("Enter issue description");
-      return;
-    }
-
-    if (!selectedPosition) {
-      alert("Select map location");
-      return;
-    }
-
-    const lat = parseFloat(
-      selectedPosition[0]
-    );
-
-    const lng = parseFloat(
-      selectedPosition[1]
-    );
-
-    const reportData = {
-      type: type.toLowerCase(),
-      desc: desc.trim(),
-      lat,
-      lng,
-      votes: 0,
-      createdAt: new Date(),
-    };
-
-    console.log(reportData);
-
-    await addDoc(
-      collection(db, "reports"),
-      reportData
-    );
-
-    // RESET FORM
-
-    setShowForm(false);
-
-    setType("");
-
-    setDesc("");
-
-    setSelectedPosition(null);
-
-    setAddingMode(false);
-
-  } catch (error) {
-
-    console.error(
-      "Firestore Error:",
-      error
-    );
-
-    alert(error.message);
-  }
-};
   // ---------------- UPVOTE ----------------
 
   const handleUpvote = async (
@@ -317,75 +404,103 @@ function MapPage() {
             position={userPosition}
             icon={userIcon}
           >
+
             <Popup>
               You are here 📍
             </Popup>
+
           </Marker>
 
           {/* REPORT MARKERS */}
 
           {reports.map((report) => {
 
-  const lat = Number(
-    report.location?.lat ||
-    report.lat
-  );
+            const lat = Number(
+              report.lat
+            );
 
-  const lng = Number(
-    report.location?.lng ||
-    report.lng
-  );
+            const lng = Number(
+              report.lng
+            );
 
-  // skip invalid coordinates
-  if (isNaN(lat) || isNaN(lng)) {
-    return null;
-  }
-
-  return (
-
-    <Marker
-      key={report.id}
-      position={[lat, lng]}
-      icon={createIcon(
-        report.type
-      )}
-    >
-
-      <Popup>
-
-        <div className="popup-card">
-
-          <h3>
-            {report.type}
-          </h3>
-
-          <p>
-            {report.title ||
-              report.desc}
-          </p>
-
-          <p>
-            👍 Votes:{" "}
-            {report.votes || 0}
-          </p>
-
-          <button
-            onClick={() =>
-              handleUpvote(
-                report.id
-              )
+            if (
+              isNaN(lat) ||
+              isNaN(lng)
+            ) {
+              return null;
             }
-          >
-            Upvote 👍
-          </button>
 
-        </div>
+            return (
 
-      </Popup>
+              <Marker
+                key={report.id}
+                position={[
+                  lat,
+                  lng,
+                ]}
+                icon={createIcon(
+                  report.type
+                )}
+              >
 
-    </Marker>
-  );
-})}
+                <Popup>
+
+                  <div className="popup-card">
+
+                    <h3>
+                      {report.type
+                        ?.charAt(0)
+                        .toUpperCase() +
+                        report.type?.slice(1)}
+                    </h3>
+
+                    <p>
+                      {report.desc}
+                    </p>
+
+                    {report.image && (
+
+                      <img
+                        src={
+                          report.image
+                        }
+                        alt="issue"
+                        style={{
+                          width:
+                            "100%",
+                          borderRadius:
+                            "10px",
+                          marginTop:
+                            "10px",
+                        }}
+                      />
+
+                    )}
+
+                    <p>
+                      👍 Votes:
+                      {" "}
+                      {report.votes || 0}
+                    </p>
+
+                    <button
+                      className="upvote-btn"
+                      onClick={() =>
+                        handleUpvote(
+                          report.id
+                        )
+                      }
+                    >
+                      Upvote 👍
+                    </button>
+
+                  </div>
+
+                </Popup>
+
+              </Marker>
+            );
+          })}
 
         </MapContainer>
 
@@ -441,13 +556,14 @@ function MapPage() {
             >
 
               <h3>
-                {report.type ||
-                  report.title}
+                {report.type
+                  ?.charAt(0)
+                  .toUpperCase() +
+                  report.type?.slice(1)}
               </h3>
 
               <p>
-                {report.desc ||
-                  report.title}
+                {report.desc}
               </p>
 
               <span>
@@ -518,6 +634,18 @@ function MapPage() {
               }
             />
 
+            {/* IMAGE INPUT */}
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setImage(
+                  e.target.files[0]
+                )
+              }
+            />
+
             <div className="form-buttons">
 
               <button
@@ -531,7 +659,9 @@ function MapPage() {
 
                 }}
               >
-                Submit Report
+                {uploading
+                  ? "Uploading..."
+                  : "Submit Report"}
               </button>
 
               <button
