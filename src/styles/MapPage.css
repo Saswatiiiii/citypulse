@@ -222,3 +222,13 @@
   border-radius: 10px;
   width: 100%;
 }
+
+.hotspot-alert {
+  background: #ff4d4f;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin: 10px;
+  font-weight: bold;
+  text-align: center;
+}

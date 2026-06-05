@@ -393,6 +393,16 @@ function MapPage() {
       report.status !== "resolved"
   );
 
+  const trafficHotspot =
+    activeReports.filter(
+      (r) => r.type === "traffic"
+    ).length > 3;
+
+  const roadHotspot =
+    activeReports.filter(
+      (r) => r.type === "road"
+    ).length > 3;
+
   return (
 
     <div className="map-layout">
@@ -400,6 +410,24 @@ function MapPage() {
       {/* MAP */}
 
       <div className="map-section">
+
+        {/* HOTSPOT ALERTS */}
+
+    <div>
+
+      {trafficHotspot && (
+        <div className="hotspot-alert">
+          🔥 Traffic Hotspot Detected
+        </div>
+      )}
+
+      {roadHotspot && (
+        <div className="hotspot-alert">
+          ⚠️ Road Damage Hotspot Detected
+        </div>
+      )}
+
+    </div>
 
         <MapContainer
           center={userPosition}

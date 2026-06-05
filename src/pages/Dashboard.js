@@ -25,7 +25,7 @@ function Dashboard() {
   const [reports, setReports] = useState([]);
 
   useEffect(() => {
-    fetch("https://citypulse-h7va.onrender.com")
+    fetch("https://citypulse-h7va.onrender.com/api/reports")
       .then((res) => res.json())
       .then((data) => setReports(data))
       .catch((err) =>
@@ -51,10 +51,21 @@ function Dashboard() {
     (r) => r.status === "pending"
   ).length;
 
+  const riskScore = Math.min(
+    100,
+    pendingCount * 10 + totalReports * 2
+  );
+
+  const resolvedCount = reports.filter(
+    (r) => r.status === "resolved"
+  ).length;
+
   const cityEfficiency =
-    totalReports === 0
-      ? 100
-      : Math.max(40, 100 - totalReports * 2);
+    totalReports > 0
+      ? Math.round(
+          (resolvedCount / totalReports) * 100
+        )
+      : 100;
 
   // ---------------------------
   // PIE CHART DATA
@@ -181,6 +192,17 @@ function Dashboard() {
             <h2>{pendingCount}</h2>
             <p>Pending Reports</p>
           </div>
+        </div>
+      </div>
+
+      <div className="stat-card">
+        <div className="stat-icon red">
+          🚨
+        </div>
+
+        <div>
+          <h2>{riskScore}%</h2>
+          <p>City Risk Score</p>
         </div>
       </div>
 
