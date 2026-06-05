@@ -60,12 +60,6 @@ function Dashboard() {
     (r) => r.status === "resolved"
   ).length;
 
-  const cityEfficiency =
-    totalReports > 0
-      ? Math.round(
-          (resolvedCount / totalReports) * 100
-        )
-      : 100;
 
   // ---------------------------
   // PIE CHART DATA
