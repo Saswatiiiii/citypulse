@@ -169,6 +169,8 @@ function MapPage() {
           })
         );
 
+        console.log(data);
+
         setReports(data);
       }
     );
@@ -284,30 +286,26 @@ function MapPage() {
           serverTimestamp(),
       };
 
-      await addDoc(
+      const docRef = await addDoc(
         collection(db, "reports"),
         reportData
       );
 
       const response = await fetch(
-        "https://citypulse-h7va.onrender.com",
+        "https://citypulse-h7va.onrender.com/api/reports",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            firebaseId: docRef.id,
             title: type,
             description: desc,
             category: type,
-
             image: imageUrl,
-
-            location: {
-              lat,
-              lng,
-            },
-          }),
+            location: { lat, lng }
+          })
         }
       );
 

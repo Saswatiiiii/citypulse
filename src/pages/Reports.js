@@ -38,6 +38,7 @@ function Reports() {
       )
       .then((data) => {
 
+         console.log(data);
         const reportsWithPriority =
           data.map(
             (report) => {
@@ -124,6 +125,13 @@ function Reports() {
 
           const data =
             docSnap.data();
+
+          console.log(
+            "Firestore:",
+            data.desc,
+            "Mongo:",
+            reports.find((r) => r._id === id)?.description
+          );  
 
           if (
             data.desc ===
