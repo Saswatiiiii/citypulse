@@ -19,61 +19,42 @@ import {
   Cell,
 } from "recharts";
 
-import {
-  collection,
-  onSnapshot,
-} from "firebase/firestore";
-
-import { db } from "../firebase";
-
 import "../styles/Dashboard.css";
 
 function Dashboard() {
-
   const [reports, setReports] = useState([]);
 
   useEffect(() => {
-
-    const unsubscribe = onSnapshot(
-      collection(db, "reports"),
-      (snapshot) => {
-
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setReports(data);
-      }
-    );
-
-    return () => unsubscribe();
-
+    fetch("http://localhost:5000/api/reports")
+      .then((res) => res.json())
+      .then((data) => setReports(data))
+      .catch((err) =>
+        console.error("Fetch Error:", err)
+      );
   }, []);
 
   // ---------------------------
-  // REALTIME COUNTS
+  // COUNTS
   // ---------------------------
 
   const totalReports = reports.length;
 
-  const trafficCount =
-    reports.filter(
-      (r) => r.type === "traffic"
-    ).length;
+  const trafficCount = reports.filter(
+    (r) => r.category === "traffic"
+  ).length;
 
-  const floodCount =
-    reports.filter(
-      (r) => r.type === "road"
-    ).length;
+  const roadCount = reports.filter(
+    (r) => r.category === "road"
+  ).length;
+
+  const pendingCount = reports.filter(
+    (r) => r.status === "pending"
+  ).length;
 
   const cityEfficiency =
     totalReports === 0
       ? 100
-      : Math.max(
-          40,
-          100 - totalReports * 2
-        );
+      : Math.max(40, 100 - totalReports * 2);
 
   // ---------------------------
   // PIE CHART DATA
@@ -81,37 +62,37 @@ function Dashboard() {
 
   const incidentData = [
     {
-      name: "Safety",
-      value: reports.filter(
-        (r) => r.type === "safety"
-      ).length,
-    },
-
-    {
       name: "Traffic",
       value: reports.filter(
-        (r) => r.type === "traffic"
-      ).length,
-    },
-
-    {
-      name: "Lighting",
-      value: reports.filter(
-        (r) => r.type === "lighting"
+        (r) => r.category === "traffic"
       ).length,
     },
 
     {
       name: "Road",
       value: reports.filter(
-        (r) => r.type === "road"
+        (r) => r.category === "road"
+      ).length,
+    },
+
+    {
+      name: "Safety",
+      value: reports.filter(
+        (r) => r.category === "safety"
+      ).length,
+    },
+
+    {
+      name: "Lighting",
+      value: reports.filter(
+        (r) => r.category === "lighting"
       ).length,
     },
 
     {
       name: "Accessibility",
       value: reports.filter(
-        (r) => r.type === "accessibility"
+        (r) => r.category === "accessibility"
       ).length,
     },
   ];
@@ -141,110 +122,72 @@ function Dashboard() {
   const weeklyData = days.map((day) => ({
     day,
     reports:
-      Math.floor(
-        Math.random() * 40
-      ) + 10,
+      Math.floor(Math.random() * 40) + 10,
   }));
 
   return (
     <div className="dashboard-page">
-
       <div className="dashboard-header">
-
-        <h1>
-          📊 City Analytics
-        </h1>
+        <h1>📊 City Analytics</h1>
 
         <p>
-          Smart urban monitoring and live analytics
+          Smart urban monitoring and live
+          analytics
         </p>
-
       </div>
 
       {/* STATS */}
 
       <div className="dashboard-stats">
-
         <div className="stat-card">
-
           <div className="stat-icon blue">
             <FaTrafficLight />
           </div>
 
           <div>
-            <h2>
-              {trafficCount}
-            </h2>
-
-            <p>
-              Traffic Alerts
-            </p>
+            <h2>{trafficCount}</h2>
+            <p>Traffic Issues</p>
           </div>
-
         </div>
 
         <div className="stat-card">
-
           <div className="stat-icon green">
             <FaCloudRain />
           </div>
 
           <div>
-            <h2>
-              {floodCount}
-            </h2>
-
-            <p>
-              Road Issues
-            </p>
+            <h2>{roadCount}</h2>
+            <p>Road Issues</p>
           </div>
-
         </div>
 
         <div className="stat-card">
-
           <div className="stat-icon red">
             <FaExclamationTriangle />
           </div>
 
           <div>
-            <h2>
-              {totalReports}
-            </h2>
-
-            <p>
-              Emergency Reports
-            </p>
+            <h2>{totalReports}</h2>
+            <p>Total Reports</p>
           </div>
-
         </div>
 
         <div className="stat-card">
-
           <div className="stat-icon orange">
             <FaCity />
           </div>
 
           <div>
-            <h2>
-              {cityEfficiency}%
-            </h2>
-
-            <p>
-              City Efficiency
-            </p>
+            <h2>{pendingCount}</h2>
+            <p>Pending Reports</p>
           </div>
-
         </div>
-
       </div>
 
       {/* CHARTS */}
 
       <div className="dashboard-grid">
-
         <div className="chart-card">
-
           <h2>
             📈 Weekly Report Activity
           </h2>
@@ -253,11 +196,7 @@ function Dashboard() {
             width="100%"
             height={300}
           >
-
-            <LineChart
-              data={weeklyData}
-            >
-
+            <LineChart data={weeklyData}>
               <XAxis dataKey="day" />
 
               <YAxis />
@@ -270,15 +209,11 @@ function Dashboard() {
                 stroke="#3b82f6"
                 strokeWidth={3}
               />
-
             </LineChart>
-
           </ResponsiveContainer>
-
         </div>
 
         <div className="chart-card">
-
           <h2>
             🚨 Incident Distribution
           </h2>
@@ -287,9 +222,7 @@ function Dashboard() {
             width="100%"
             height={300}
           >
-
             <PieChart>
-
               <Pie
                 data={incidentData}
                 cx="50%"
@@ -298,10 +231,8 @@ function Dashboard() {
                 dataKey="value"
                 label
               >
-
                 {incidentData.map(
                   (entry, index) => (
-
                     <Cell
                       key={index}
                       fill={
@@ -311,53 +242,38 @@ function Dashboard() {
                         ]
                       }
                     />
-
                   )
                 )}
-
               </Pie>
 
               <Tooltip />
-
             </PieChart>
-
           </ResponsiveContainer>
-
         </div>
-
       </div>
 
       {/* RECENT ACTIVITY */}
 
       <div className="activity-section">
-
         <h2>
           🔴 Recent Activity
         </h2>
 
         <div className="activity-list">
-
           {reports
             .slice(0, 5)
             .map((report) => (
-
               <div
                 className="activity-card"
-                key={report.id}
+                key={report._id}
               >
-
                 📍{" "}
-
-                {report.desc}
-
+                {report.description ||
+                  "No description"}
               </div>
-
             ))}
-
         </div>
-
       </div>
-
     </div>
   );
 }

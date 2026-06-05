@@ -6,6 +6,8 @@ import Dashboard from "./pages/Dashboard";
 import MapPage from "./pages/MapPage";
 import Weather from "./pages/Weather";
 import Reports from "./pages/Reports";
+import AdminLogin from "./pages/AdminLogin";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./styles/App.css";
 
@@ -24,7 +26,19 @@ function App() {
 
             <Route path="/weather" element={<Weather />} />
 
-            <Route path="/reports" element={<Reports />} />
+            <Route
+                  path="/admin"
+                  element={<AdminLogin />}
+                />
+
+                <Route
+                  path="/reports"
+                  element={
+                    <ProtectedRoute>
+                      <Reports />
+                    </ProtectedRoute>
+                  }
+                />
           </Routes>
         </div>
 

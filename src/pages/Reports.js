@@ -11,7 +11,8 @@ import {
 
 import {
   collection,
-  onSnapshot,
+  getDocs,
+  updateDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -26,68 +27,157 @@ function Reports() {
   const [search, setSearch] =
     useState("");
 
-  // ---------------- REALTIME REPORTS ----------------
+  // ---------------- FETCH REPORTS ----------------
 
   useEffect(() => {
 
-    const unsubscribe = onSnapshot(
-      collection(db, "reports"),
+    fetch(
+      "http://localhost:5000/api/reports"
+    )
+      .then((res) =>
+        res.json()
+      )
+      .then((data) => {
 
-      (snapshot) => {
+        const reportsWithPriority =
+          data.map(
+            (report) => {
 
-        const data = snapshot.docs.map(
-          (doc) => {
+              let priority =
+                "Low";
 
-            const report =
-              doc.data();
+              if (
+                (report.votes ||
+                  0) > 8
+              ) {
+                priority =
+                  "High";
+              }
 
-            let priority =
-              "Low";
+              else if (
+                (report.votes ||
+                  0) > 5
+              ) {
+                priority =
+                  "Medium";
+              }
 
-            if (
-              report.votes > 8
-            ) {
-              priority =
-                "High";
+              return {
+                ...report,
+                priority,
+              };
             }
+          );
 
-            else if (
-              report.votes > 5
-            ) {
-              priority =
-                "Medium";
-            }
-
-            return {
-
-              id: doc.id,
-
-              ...report,
-
-              priority,
-            };
-          }
+        setReports(
+          reportsWithPriority
         );
 
-        setReports(data);
-      }
-    );
-
-    return () =>
-      unsubscribe();
+      })
+      .catch(
+        console.error
+      );
 
   }, []);
 
+  // ---------------- UPDATE STATUS ----------------
+
+  const updateStatus = async (
+    id,
+    status
+  ) => {
+
+    try {
+
+      // MongoDB update
+
+      await fetch(
+        `http://localhost:5000/api/reports/${id}/status`,
+        {
+          method: "PATCH",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            status,
+          }),
+        }
+      );
+
+      // Firebase update
+
+      const reportsRef =
+        collection(
+          db,
+          "reports"
+        );
+
+      const snapshot =
+        await getDocs(
+          reportsRef
+        );
+
+      snapshot.forEach(
+        async (docSnap) => {
+
+          const data =
+            docSnap.data();
+
+          if (
+            data.desc ===
+            reports.find(
+              (r) =>
+                r._id === id
+            )?.description
+          ) {
+
+            await updateDoc(
+              docSnap.ref,
+              {
+                status,
+              }
+            );
+
+          }
+
+        }
+      );
+
+      // Update UI
+
+      setReports(
+        reports.map(
+          (report) =>
+            report._id === id
+              ? {
+                  ...report,
+                  status,
+                }
+              : report
+        )
+      );
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+    }
+
+  };
   // ---------------- SEARCH ----------------
 
-  const filteredReports =
-    reports.filter((report) =>
-      report.type
+  const filteredReports = reports.filter(
+    (report) =>
+      report.status !== "resolved" &&
+      report.category
         ?.toLowerCase()
-        .includes(
-          search.toLowerCase()
-        )
-    );
+        .includes(search.toLowerCase())
+  );
 
   return (
 
@@ -111,8 +201,6 @@ function Reports() {
 
         </div>
 
-        {/* SEARCH */}
-
         <div className="reports-search">
 
           <FaSearch />
@@ -130,6 +218,16 @@ function Reports() {
 
         </div>
 
+        <button
+          onClick={() => {
+            localStorage.removeItem("admin");
+            window.location.href = "/admin";
+          }}
+          className="logout-btn"
+        >
+          Logout
+        </button>
+
       </div>
 
       {/* REPORTS */}
@@ -141,7 +239,7 @@ function Reports() {
 
             <div
               className="report-card"
-              key={report.id}
+              key={report._id}
             >
 
               {/* TOP */}
@@ -150,11 +248,10 @@ function Reports() {
 
                 <h2>
 
-                  {report.type
+                  {report.category
                     ?.charAt(0)
                     .toUpperCase() +
-
-                    report.type?.slice(
+                    report.category?.slice(
                       1
                     )}
 
@@ -170,27 +267,21 @@ function Reports() {
 
               </div>
 
-              {/* IMAGE */}
-
-              {report.image && (
-
-                <img
-                  src={report.image}
-                  alt="report"
-                  className="report-image"
-                />
-
-              )}
-
               {/* DESCRIPTION */}
 
               <p className="report-description">
-
-                {report.desc}
-
+                {report.description}
               </p>
 
-              {/* INFO */}
+              {report.image && (
+                <img
+                  src={report.image}
+                  alt="Report"
+                  className="report-image"
+                />
+              )}
+
+              {/* LOCATION */}
 
               <div className="report-info">
 
@@ -198,7 +289,9 @@ function Reports() {
 
                   <FaMapMarkerAlt />
 
-                  {report.lat?.toFixed(
+                  {" "}
+
+                  {report.location?.lat?.toFixed(
                     4
                   )}
 
@@ -206,7 +299,7 @@ function Reports() {
 
                   {" "}
 
-                  {report.lng?.toFixed(
+                  {report.location?.lng?.toFixed(
                     4
                   )}
 
@@ -224,30 +317,74 @@ function Reports() {
 
               </div>
 
-              {/* BOTTOM */}
+              {/* STATUS + ACTIONS */}
 
               <div className="report-bottom">
 
-                <span className="status Active">
+                <span
+                  className={`status ${report.status}`}
+                >
 
-                  Active
+                  {report.status}
 
                 </span>
 
-                <button>
-                  View Details
-                </button>
+                {report.status ===
+                  "pending" && (
+
+                  <button
+                    onClick={() =>
+                      updateStatus(
+                        report._id,
+                        "in-progress"
+                      )
+                    }
+                  >
+                    Start Work
+                  </button>
+
+                )}
+
+                {report.status ===
+                  "in-progress" && (
+
+                  <button
+                    onClick={() =>
+                      updateStatus(
+                        report._id,
+                        "resolved"
+                      )
+                    }
+                  >
+                    Resolve
+                  </button>
+
+                )}
+
+                {report.status ===
+                  "resolved" && (
+
+                  <button
+                    disabled
+                  >
+                    Completed
+                  </button>
+
+                )}
 
               </div>
 
             </div>
+
           )
         )}
 
       </div>
 
     </div>
+
   );
+
 }
 
 export default Reports;

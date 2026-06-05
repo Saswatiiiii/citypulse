@@ -151,6 +151,8 @@ function MapPage() {
       88.3639,
     ]);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);  
+
   // ---------------- FIRESTORE ----------------
 
   useEffect(() => {
@@ -202,6 +204,9 @@ function MapPage() {
 
   const handleAddReport = async () => {
 
+     if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
 
       if (!type) {
@@ -273,6 +278,8 @@ function MapPage() {
 
         image: imageUrl,
 
+        status: "pending",
+
         createdAt:
           serverTimestamp(),
       };
@@ -282,32 +289,48 @@ function MapPage() {
         reportData
       );
 
+      const response = await fetch(
+        "http://localhost:5000/api/reports",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: type,
+            description: desc,
+            category: type,
+
+            image: imageUrl,
+
+            location: {
+              lat,
+              lng,
+            },
+          }),
+        }
+      );
+
+      console.log("Status:", response.status);
+
+      const result = await response.json();
+
+      console.log("MongoDB Response:", result);
+
       // ---------------- EMAIL SEND ----------------
 
-      await emailjs.send(
-        "service_bv476x2",
-        "template_6s3t3ms",
-        {
-          name: type,
-
-          message: `
-Issue Type: ${type}
-
-Description:
-${desc}
-
-Location:
-${lat}, ${lng}
-
-Votes: 0
-
-Image:
-${imageUrl}
-          `,
-        },
-
-        "Ei_hNMbMvYIF3XPvA"
-      );
+        await emailjs.send(
+          "service_bv476x2",
+          "template_6s3t3ms",
+          {
+            type: type,
+            desc: desc,
+            location: `${lat}, ${lng}`,
+            votes: 0,
+            image: imageUrl,
+          },
+          "Ei_hNMbMvYIF3XPvA"
+        );
 
       // RESET
 
@@ -336,6 +359,7 @@ ${imageUrl}
     } finally {
 
       setUploading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -363,6 +387,11 @@ ${imageUrl}
 
     }
   };
+
+  const activeReports = reports.filter(
+    (report) =>
+      report.status !== "resolved"
+  );
 
   return (
 
@@ -413,7 +442,7 @@ ${imageUrl}
 
           {/* REPORT MARKERS */}
 
-          {reports.map((report) => {
+          {activeReports.map((report) => {
 
             const lat = Number(
               report.lat
@@ -540,7 +569,7 @@ ${imageUrl}
           🔴 Live City Feed
         </h2>
 
-        {reports.length === 0 ? (
+        {activeReports.length === 0 ? (
 
           <p className="empty-feed">
             No reports yet...
@@ -548,7 +577,7 @@ ${imageUrl}
 
         ) : (
 
-          reports.map((report) => (
+          activeReports.map((report) => (
 
             <div
               key={report.id}
