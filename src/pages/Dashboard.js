@@ -200,6 +200,17 @@ function Dashboard() {
         </div>
       </div>
 
+      <div className="stat-card">
+        <div className="stat-icon green">
+          ✅
+        </div>
+
+        <div>
+          <h2>{resolvedCount}</h2>
+          <p>Resolved Reports</p>
+        </div>
+      </div>
+
       {/* CHARTS */}
 
       <div className="dashboard-grid">
