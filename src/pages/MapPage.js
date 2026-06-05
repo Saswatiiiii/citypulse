@@ -290,7 +290,7 @@ function MapPage() {
       );
 
       const response = await fetch(
-        "http://localhost:5000/api/reports",
+        "https://citypulse-h7va.onrender.com",
         {
           method: "POST",
           headers: {

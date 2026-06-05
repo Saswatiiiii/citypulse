@@ -32,7 +32,7 @@ function Reports() {
   useEffect(() => {
 
     fetch(
-      "http://localhost:5000/api/reports"
+      "https://citypulse-h7va.onrender.com"
     )
       .then((res) =>
         res.json()

@@ -25,7 +25,7 @@ function Dashboard() {
   const [reports, setReports] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/reports")
+    fetch("https://citypulse-h7va.onrender.com")
       .then((res) => res.json())
       .then((data) => setReports(data))
       .catch((err) =>
