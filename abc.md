@@ -246,27 +246,20 @@ using EmailJS integration.
 # 📁 Project Structure
 
 ```bash
-src/
+citypulse/
 │
-├── components/
-│   └── Sidebar.js
-│
-├── pages/
-│   ├── Dashboard.js
-│   ├── MapPage.js
-│   ├── Reports.js
-│   └── Weather.js
-│
-├── styles/
-│   ├── Dashboard.css
-│   ├── MapPage.css
-│   ├── Reports.css
-│   ├── Sidebar.css
-│   └── Weather.css
-│
-├── firebase.js
-├── App.js
-├── index.js
+├── frontend/
+│   ├── components/
+│   ├── pages/
+│   │   ├── Dashboard.js
+│   │   ├── MapPage.js
+│   │   ├── Reports.js
+│   │   ├── AdminLogin.js
+│   │   └── Weather.js
+│   │
+│   ├── styles/
+│   ├── firebase.js
+│   └── App.js
 │
 ├── backend/
 │   ├── controllers/
@@ -275,16 +268,6 @@ src/
 │   └── server.js
 │
 └── README.md
-```
-
----
-
-# ⚙️ Installation
-
-## 1️⃣ Clone Repository
-
-```bash
-git clone https://github.com/Saswatiiiii/citypulse.git
 ```
 
 ---
@@ -330,33 +313,6 @@ https://citypulse-dusky.vercel.app
 https://citypulse-h7va.onrender.com
 
 ---
-
-# 📷 Screenshots
-
-## 📊 Dashboard
-
-![Dashboard](src/assets/dashboard.png)
-
----
-
-## 🗺️ Map Page
-
-![Map](src/assets/map.png)
-
----
-
-## 📂 Reports Page
-
-![Reports](src/assets/reports.png)
-
----
-
-## 🌦️ Weather Page
-
-![Weather](src/assets/weather.png)
-
----
-
 
 # 🌟 Future Enhancements
 
