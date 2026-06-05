@@ -31,9 +31,8 @@ function Reports() {
 
   useEffect(() => {
 
-    fetch(
-      "https://citypulse-h7va.onrender.com"
-    )
+    
+      fetch("https://citypulse-h7va.onrender.com/api/reports")
       .then((res) =>
         res.json()
       )
@@ -92,7 +91,7 @@ function Reports() {
       // MongoDB update
 
       await fetch(
-        `http://localhost:5000/api/reports/${id}/status`,
+        `https://citypulse-h7va.onrender.com/api/reports/${id}/status`,
         {
           method: "PATCH",
 
