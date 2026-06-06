@@ -251,13 +251,15 @@ src/
 ├── components/
 │   └── Sidebar.js
 │
-├── pages/
+├── pages/  
+│   ├── AdminLogin.js
 │   ├── Dashboard.js
 │   ├── MapPage.js
 │   ├── Reports.js
 │   └── Weather.js
 │
-├── styles/
+├── styles/ 
+│   ├── AdminLogin.css
 │   ├── Dashboard.css
 │   ├── MapPage.css
 │   ├── Reports.css
@@ -324,6 +326,7 @@ npm start
 ### Frontend
 
 https://citypulse-dusky.vercel.app
+
 
 ### Backend API
 
