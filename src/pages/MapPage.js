@@ -427,6 +427,19 @@ function MapPage() {
 
     </div>
 
+      <div className="map-header">
+
+       <h2>
+         🗺️ City Incident Map
+       </h2>
+
+       <span>
+         {activeReports.length}
+         {" "}
+         Active Reports
+        </span>
+     </div>
+
         <MapContainer
           center={userPosition}
           zoom={13}
@@ -590,6 +603,37 @@ function MapPage() {
       {/* LIVE FEED */}
 
       <div className="feed-sidebar">
+      
+      <div className="map-stats">
+
+       <div className="map-stat-card">
+         <h3>{activeReports.length}</h3>
+         <p>Active Reports</p>
+        </div>
+
+      <div className="map-stat-card">
+         <h3>
+         {
+           activeReports.filter(
+           r => r.type === "traffic"
+           ).length
+         }
+        </h3>
+       <p>Traffic</p>
+       </div>
+
+      <div className="map-stat-card">
+         <h3>
+         {
+           activeReports.filter(
+           r => r.type === "road"
+           ).length
+          }
+         </h3>
+         <p>Road Issues</p>
+        </div>
+
+      </div>
 
         <h2>
           🔴 Live City Feed
@@ -621,10 +665,15 @@ function MapPage() {
                 {report.desc}
               </p>
 
-              <span>
-                👍{" "}
-                {report.votes || 0}
-              </span>
+             <div className="feed-meta">
+                <span>
+                 👍 {report.votes || 0}
+               </span>
+
+               <span className="feed-type">
+                 {report.type}
+               </span>
+             </div>
 
             </div>
           ))

@@ -1,18 +1,18 @@
 import React, {
-  useEffect,
-  useState,
+useEffect,
+useState,
 } from "react";
 
 import {
-  FaMapMarkerAlt,
-  FaSearch,
-  FaThumbsUp,
+FaMapMarkerAlt,
+FaSearch,
+FaThumbsUp,
 } from "react-icons/fa";
 
 import {
-  collection,
-  getDocs,
-  updateDoc,
+collection,
+getDocs,
+updateDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -20,378 +20,426 @@ import { db } from "../firebase";
 import "../styles/Reports.css";
 
 function Reports() {
+const [reports, setReports] =
+useState([]);
 
-  const [reports, setReports] =
-    useState([]);
+const [search, setSearch] =
+useState("");
 
-  const [search, setSearch] =
-    useState("");
+const [
+statusFilter,
+setStatusFilter,
+] = useState("all");
 
-  // ---------------- FETCH REPORTS ----------------
-
-  useEffect(() => {
-
-    
-      fetch("https://citypulse-h7va.onrender.com/api/reports")
-      .then((res) =>
-        res.json()
-      )
-      .then((data) => {
-
-         console.log(data);
-        const reportsWithPriority =
-          data.map(
-            (report) => {
-
-              let priority =
-                "Low";
-
-              if (
-                (report.votes ||
-                  0) > 8
-              ) {
-                priority =
-                  "High";
-              }
-
-              else if (
-                (report.votes ||
-                  0) > 5
-              ) {
-                priority =
-                  "Medium";
-              }
-
-              return {
-                ...report,
-                priority,
-              };
-            }
-          );
-
-        setReports(
-          reportsWithPriority
-        );
-
-      })
-      .catch(
-        console.error
-      );
-
-  }, []);
-
-  // ---------------- UPDATE STATUS ----------------
-
-  const updateStatus = async (
-    id,
-    status
-  ) => {
-
-    try {
-
-      // MongoDB update
-
-      await fetch(
-        `https://citypulse-h7va.onrender.com/api/reports/${id}/status`,
-        {
-          method: "PATCH",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-
-          body: JSON.stringify({
-            status,
-          }),
-        }
-      );
-
-      // Firebase update
-
-      const reportsRef =
-        collection(
-          db,
-          "reports"
-        );
-
-      const snapshot =
-        await getDocs(
-          reportsRef
-        );
-
-      snapshot.forEach(
-        async (docSnap) => {
-
-          const data =
-            docSnap.data();
-
-          console.log(
-            "Firestore:",
-            data.desc,
-            "Mongo:",
-            reports.find((r) => r._id === id)?.description
-          );  
+useEffect(() => {
+fetch(
+"https://citypulse-h7va.onrender.com/api/reports"
+)
+.then((res) =>
+res.json()
+)
+.then((data) => {
+const reportsWithPriority =
+data.map(
+(report) => {
+let priority =
+"Low";
 
           if (
-            data.desc ===
-            reports.find(
-              (r) =>
-                r._id === id
-            )?.description
+            (report.votes ||
+              0) > 8
           ) {
-
-            await updateDoc(
-              docSnap.ref,
-              {
-                status,
-              }
-            );
-
+            priority =
+              "High";
+          } else if (
+            (report.votes ||
+              0) > 5
+          ) {
+            priority =
+              "Medium";
           }
 
+          return {
+            ...report,
+            priority,
+          };
         }
       );
 
-      // Update UI
-
-      setReports(
-        reports.map(
-          (report) =>
-            report._id === id
-              ? {
-                  ...report,
-                  status,
-                }
-              : report
-        )
-      );
-
-    } catch (error) {
-
-      console.error(
-        error
-      );
-
-    }
-
-  };
-  // ---------------- SEARCH ----------------
-
-  const filteredReports = reports.filter(
-    (report) =>
-      report.status !== "resolved" &&
-      report.category
-        ?.toLowerCase()
-        .includes(search.toLowerCase())
+    setReports(
+      reportsWithPriority
+    );
+  })
+  .catch(
+    console.error
   );
 
-  return (
+}, []);
 
-    <div className="reports-page">
+const updateStatus =
+async (
+id,
+status
+) => {
+try {
+await fetch(
+`https://citypulse-h7va.onrender.com/api/reports/${id}/status`,
+{
+method: "PATCH",
 
-      {/* HEADER */}
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
 
-      <div className="reports-header">
+        body: JSON.stringify({
+          status,
+        }),
+      }
+    );
 
-        <div>
+    const reportsRef =
+      collection(
+        db,
+        "reports"
+      );
 
-          <h1>
-            🚨 City Reports
-          </h1>
+    const snapshot =
+      await getDocs(
+        reportsRef
+      );
 
-          <p>
-            Monitor and manage
-            real-time urban
-            incidents
-          </p>
+    snapshot.forEach(
+      async (
+        docSnap
+      ) => {
+        const data =
+          docSnap.data();
 
-        </div>
-
-        <div className="reports-search">
-
-          <FaSearch />
-
-          <input
-            type="text"
-            placeholder="Search reports..."
-            value={search}
-            onChange={(e) =>
-              setSearch(
-                e.target.value
-              )
+        if (
+          data.desc ===
+          reports.find(
+            (r) =>
+              r._id ===
+              id
+          )?.description
+        ) {
+          await updateDoc(
+            docSnap.ref,
+            {
+              status,
             }
-          />
+          );
+        }
+      }
+    );
 
-        </div>
+    setReports(
+      reports.map(
+        (
+          report
+        ) =>
+          report._id ===
+          id
+            ? {
+                ...report,
+                status,
+              }
+            : report
+      )
+    );
+  } catch (
+    error
+  ) {
+    console.error(
+      error
+    );
+  }
+};
 
-        <button
-          onClick={() => {
-            localStorage.removeItem("admin");
-            window.location.href = "/admin";
-          }}
-          className="logout-btn"
-        >
-          Logout
-        </button>
+const filteredReports = reports.filter(
+  (report) => {
+const matchesSearch =
+report.category
+?.toLowerCase()
+.includes(
+search.toLowerCase()
+) ||
+report.description
+?.toLowerCase()
+.includes(
+search.toLowerCase()
+);
 
-      </div>
 
-      {/* REPORTS */}
+    const matchesStatus =
+      statusFilter ===
+      "all"
+        ? true
+        : report.status ===
+          statusFilter;
 
-      <div className="reports-grid">
+    return (
+      matchesSearch &&
+      matchesStatus
+    );
+  }
+);
 
-        {filteredReports.map(
-          (report) => (
 
-            <div
-              className="report-card"
-              key={report._id}
-            >
+return ( <div className="reports-page">
 
-              {/* TOP */}
+  <div className="reports-header">
 
-              <div className="report-top">
+    <div>
+      <h1>
+        🚨 City Reports
+      </h1>
 
-                <h2>
-
-                  {report.category
-                    ?.charAt(0)
-                    .toUpperCase() +
-                    report.category?.slice(
-                      1
-                    )}
-
-                </h2>
-
-                <span
-                  className={`priority ${report.priority}`}
-                >
-
-                  {report.priority}
-
-                </span>
-
-              </div>
-
-              {/* DESCRIPTION */}
-
-              <p className="report-description">
-                {report.description}
-              </p>
-
-              {report.image && (
-                <img
-                  src={report.image}
-                  alt="Report"
-                  className="report-image"
-                />
-              )}
-
-              {/* LOCATION */}
-
-              <div className="report-info">
-
-                <span>
-
-                  <FaMapMarkerAlt />
-
-                  {" "}
-
-                  {report.location?.lat?.toFixed(
-                    4
-                  )}
-
-                  ,
-
-                  {" "}
-
-                  {report.location?.lng?.toFixed(
-                    4
-                  )}
-
-                </span>
-
-                <span>
-
-                  <FaThumbsUp />
-
-                  {" "}
-
-                  {report.votes || 0}
-
-                </span>
-
-              </div>
-
-              {/* STATUS + ACTIONS */}
-
-              <div className="report-bottom">
-
-                <span
-                  className={`status ${report.status}`}
-                >
-
-                  {report.status}
-
-                </span>
-
-                {report.status ===
-                  "pending" && (
-
-                  <button
-                    onClick={() =>
-                      updateStatus(
-                        report._id,
-                        "in-progress"
-                      )
-                    }
-                  >
-                    Start Work
-                  </button>
-
-                )}
-
-                {report.status ===
-                  "in-progress" && (
-
-                  <button
-                    onClick={() =>
-                      updateStatus(
-                        report._id,
-                        "resolved"
-                      )
-                    }
-                  >
-                    Resolve
-                  </button>
-
-                )}
-
-                {report.status ===
-                  "resolved" && (
-
-                  <button
-                    disabled
-                  >
-                    Completed
-                  </button>
-
-                )}
-
-              </div>
-
-            </div>
-
-          )
-        )}
-
-      </div>
-
+      <p>
+        Monitor and manage
+        urban incidents
+        in real time
+      </p>
     </div>
 
-  );
+    <div className="reports-search">
+      <FaSearch />
 
+      <input
+        type="text"
+        placeholder="Search reports..."
+        value={search}
+        onChange={(e) =>
+          setSearch(
+            e.target.value
+          )
+        }
+      />
+    </div>
+
+    <select
+      className="status-filter"
+      value={
+        statusFilter
+      }
+      onChange={(e) =>
+        setStatusFilter(
+          e.target.value
+        )
+      }
+    >
+      <option value="all">
+        All Reports
+      </option>
+
+      <option value="pending">
+        Pending
+      </option>
+
+      <option value="in-progress">
+        In Progress
+      </option>
+
+      <option value="resolved">
+        Resolved
+      </option>
+    </select>
+
+    <button
+      className="logout-btn"
+      onClick={() => {
+        localStorage.removeItem(
+          "admin"
+        );
+
+        window.location.href =
+          "/admin";
+      }}
+    >
+      Logout
+    </button>
+
+  </div>
+
+  <div className="reports-summary">
+
+    <div className="summary-card">
+      <h2>
+        {reports.length}
+      </h2>
+      <p>
+        Total Reports
+      </p>
+    </div>
+
+    <div className="summary-card">
+      <h2>
+        {
+          reports.filter(
+            (
+              r
+            ) =>
+              r.status ===
+              "pending"
+          ).length
+        }
+      </h2>
+      <p>
+        Pending
+      </p>
+    </div>
+
+    <div className="summary-card">
+      <h2>
+        {
+          reports.filter(
+            (
+              r
+            ) =>
+              r.status ===
+              "resolved"
+          ).length
+        }
+      </h2>
+      <p>
+        Resolved
+      </p>
+    </div>
+
+  </div>
+
+  <div className="reports-grid">
+
+    {filteredReports.map(
+      (report) => (
+
+        <div
+          className="report-card"
+          key={
+            report._id
+          }
+        >
+
+          <div className="report-top">
+
+            <h2>
+              {report.category
+                ?.charAt(
+                  0
+                )
+                .toUpperCase() +
+                report.category?.slice(
+                  1
+                )}
+            </h2>
+
+            <span
+              className={`priority ${report.priority}`}
+            >
+              {
+                report.priority
+              }
+            </span>
+
+          </div>
+
+          <p className="report-description">
+            {
+              report.description
+            }
+          </p>
+
+          {report.image && (
+            <img
+              src={
+                report.image
+              }
+              alt="Report"
+              className="report-image"
+            />
+          )}
+
+          <div className="report-info">
+
+            <span>
+              <FaMapMarkerAlt />
+              {" "}
+              {report.location?.lat?.toFixed(
+                4
+              )}
+              ,
+              {" "}
+              {report.location?.lng?.toFixed(
+                4
+              )}
+            </span>
+
+            <span>
+              <FaThumbsUp />
+              {" "}
+              {report.votes ||
+                0}
+            </span>
+
+          </div>
+
+          <div className="report-bottom">
+
+            <span
+              className={`status ${report.status}`}
+            >
+              {
+                report.status
+              }
+            </span>
+
+            {report.status ===
+              "pending" && (
+              <button
+                onClick={() =>
+                  updateStatus(
+                    report._id,
+                    "in-progress"
+                  )
+                }
+              >
+                Start Work
+              </button>
+            )}
+
+            {report.status ===
+              "in-progress" && (
+              <button
+                onClick={() =>
+                  updateStatus(
+                    report._id,
+                    "resolved"
+                  )
+                }
+              >
+                Resolve
+              </button>
+            )}
+
+            {report.status ===
+              "resolved" && (
+              <button disabled>
+                Completed
+              </button>
+            )}
+
+          </div>
+
+        </div>
+      )
+    )}
+
+  </div>
+
+</div>
+
+);
 }
 
 export default Reports;
