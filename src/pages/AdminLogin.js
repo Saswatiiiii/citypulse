@@ -10,6 +10,9 @@ function AdminLogin() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
+    console.log("Username:", username);
+    console.log("Password:", password);
+
     if (
       username === "admin" &&
       password === "citypulse123"
